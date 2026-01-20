@@ -206,9 +206,9 @@ questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
         })
     }
     let newUpvotes=question.upvotes;
-    upvotes+=1;
+    newUpvotes+=1;
     let newUpvoters=question.upvoters;
-    upvoters.push(req.user._id)
+    newUpvoters.push(req.user._id)
     const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
         upvotes:newUpvotes,
         upvoters:newUpvoters,
@@ -233,7 +233,7 @@ questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
 })
 
 
-uestionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
+questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
     try {
 
     const question=await Question.findById(req.params.id);
@@ -256,7 +256,7 @@ uestionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
         })
     }
     let newUpvotes=question.upvotes;
-    upvotes-=1;
+        newUpvotes-=1;
     let newUpvoters=question.upvoters.filter((upvoter)=>upvoter!==req.user._id)
     const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
         upvotes:newUpvotes,
