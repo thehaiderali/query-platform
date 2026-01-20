@@ -1,5 +1,7 @@
 import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
+import { tokenSchema } from "../validation/zod.js";
+import { User } from "../models/user.js";
 dotenv.config()
 
 export async function authMiddleware(req,res,next){

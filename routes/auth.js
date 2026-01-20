@@ -81,8 +81,7 @@ authRouter.post("/login",async(req,res)=>{
     }
 
     // Check Password
-
-    const isMatch= bcrypt.compare(data.password,already.password)
+    const isMatch= await bcrypt.compare(data.password,already.password)
     if(!isMatch){
         return res.status(404).json({
             success:false,
