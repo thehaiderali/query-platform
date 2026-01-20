@@ -113,7 +113,7 @@ questionRouter.get("/questions/:id",async(req,res)=>{
 questionRouter.put("/question/:id",async(req,res)=>{
     try {
        
-     const {success,data}=questionUpdate(req.body);
+     const {success,data}=questionUpdate.safeParse(req.body);
      if(!success){
         return res.status(400).json({
             success:false,
