@@ -183,6 +183,108 @@ questionRouter.delete("/questions/:id",async(req,res)=>{
 
 
 
+questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
+    try {
+
+    const question=await Question.findById(req.params.id);
+    if(!question){
+        return res.status(400).json({
+            success:false,
+            error:"Question not found"
+        })
+    }
+    let alreadyUpvoter=false
+    for( const upvoter of question.upvoters){
+        if(upvoter===req.user._id){
+            alreadyUpvoter=true
+        }
+    }
+    if(alreadyUpvoter){
+        return res.status(409).json({
+            success:false,
+            error:"Already upvoted this question"
+        })
+    }
+    let newUpvotes=question.upvotes;
+    upvotes+=1;
+    let newUpvoters=question.upvoters;
+    upvoters.push(req.user._id)
+    const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
+        upvotes:newUpvotes,
+        upvoters:newUpvoters,
+    },{
+        new:true
+    })
+    return res.status(200).json({
+        success:false,
+        data:{
+            upvotes:newQuestion.upvotes,
+            upvoted:true
+        }
+    })
+        
+    } catch (error) {
+        console.log("Error in Upvoting Question : ",error)
+        return res.status(500).json({
+            success:false,
+            error:"Internal Server Error"
+        })
+    }
+})
+
+
+uestionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
+    try {
+
+    const question=await Question.findById(req.params.id);
+    if(!question){
+        return res.status(400).json({
+            success:false,
+            error:"Question not found"
+        })
+    }
+    let alreadyUpvoter=false
+    for( const upvoter of question.upvoters){
+        if(upvoter===req.user._id){
+            alreadyUpvoter=true
+        }
+    }
+    if(!alreadyUpvoter){
+        return res.status(409).json({
+            success:false,
+            error:"Not upvoted this question"
+        })
+    }
+    let newUpvotes=question.upvotes;
+    upvotes-=1;
+    let newUpvoters=question.upvoters.filter((upvoter)=>upvoter!==req.user._id)
+    const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
+        upvotes:newUpvotes,
+        upvoters:newUpvoters,
+    },{
+        new:true
+    })
+    return res.status(200).json({
+        success:false,
+        data:{
+            upvotes:newQuestion.upvotes,
+            upvoted:false
+        }
+    })
+        
+    } catch (error) {
+        console.log("Error in Deleting Upvoting Question : ",error)
+        return res.status(500).json({
+            success:false,
+            error:"Internal Server Error"
+        })
+    }
+})
+
+
+
+
+
 
 export default questionRouter;
 
