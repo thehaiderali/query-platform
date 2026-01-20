@@ -34,7 +34,8 @@ const questionSchema=new mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["open","answered","closed"]
+        enum:["open","answered","closed"],
+        default:"open"
     },
 
 

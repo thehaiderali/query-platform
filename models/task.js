@@ -25,3 +25,6 @@ const taskSchema=new mongoose.Schema({
         type:String
     }
 },{timestamps:true})
+
+
+export const Task=mongoose.model("Task",taskSchema)

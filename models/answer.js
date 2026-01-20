@@ -36,3 +36,5 @@ const answerSchema=new mongoose.Schema({
         default:false
     }
 },{timestamps:true})
+
+export const Answer=mongoose.model("Answer",answerSchema)
