@@ -31,3 +31,9 @@ export const questionUpdate=z.object({
     tags:z.array(z.string()),
     status:z.enum(["open","closed"]).optional()
 })
+
+export const answerSchema=z.object({
+    content:z.string().min(20)
+})
+
+

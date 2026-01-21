@@ -1,7 +1,7 @@
 import {Router} from "express";
 import dotenv from "dotenv"
 import { authMiddleware } from "../middleware/middleware.js";
-import { questionSchema, questionUpdate } from "../validation/zod.js";
+import { answerSchema, questionSchema, questionUpdate } from "../validation/zod.js";
 import { Question } from "../models/question.js";
 import { Answer } from "../models/answer.js";
 
@@ -284,6 +284,135 @@ questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
 
 
 
+questionRouter.post("/questions/:id/answers",authMiddleware,async(req,res)=>{
+    try {
+
+      const  {success,data}=answerSchema.safeParse(req.body);
+      if(!success){
+        return res.status(400).json({
+            success:false,
+            error:"Invalid request schema"
+        })
+      }  
+    const question=await Question.findById(req.params.id);
+    if(!question){
+        return res.status(400).json({
+            success:false,
+            error:"Question not found"
+        })
+    }
+
+    const answer=await Answer.create({
+        questionId:question._id,
+        authorId:question.authorId,
+        content:data.content,
+        source:"user",
+    })
+    
+    return res.status(201).json({
+        success:true,
+        data:answer
+    })
+    
+
+    } catch (error) {
+        console.log("Error in Answer Creation Route : ",error)
+        return res.status(500).json({
+            success:false,
+            error:"Internal Server Error"
+        })
+    }
+})
+
+
+
+questionRouter.get("/questions/:id/answers",async(req,res)=>{
+    try {
+        
+      const {sortBy} =req.query;  
+      const question=await Question.findbyId(req.params.id);
+      if(!question){
+        return res.status(400).json({
+            success:false,
+            error:"Question not found"
+        })
+    }  
+    let sort = { createdAt: -1 }; // default
+
+    if (sortBy === "recent") {
+      sort = { createdAt: -1 };
+    }
+    
+    if (sortBy === "upvotes") {
+      sort = { upvotes: -1 };
+    }
+    
+    if (sortBy === "accepted") {
+      sort = { isAccepted: -1 };
+    }
+    
+    const answers = await Answer.find({ questionId: question._id })
+      .sort(sort);
+
+    return res.status(201).json({
+        success:true,
+        data:answers
+    })
+    } catch (error) {
+        console.log("Error in Fetching Answers : ",error)
+        return res.status(500).json({
+            success:false,
+            error:"Internal Server Error"
+        })
+    }
+})
+
+
+
+
+
+questionRouter.put("/answers/:id",authMiddleware,async(req,res)=>{
+    try {
+
+     const  {success,data}=answerSchema.safeParse(req.body);
+      if(!success){
+        return res.status(400).json({
+            success:false,
+            error:"Invalid request schema"
+        })
+      }  
+    const answer=await Answer.findById(req.params.id);
+    if(!answer){
+        return res.status(400).json({
+            success:false,
+            error:"Answer not found"
+        })
+    }
+    if(answer.authorId!==req.user._id){
+        return res.status(403).json({
+            success:false,
+            error:"Not Authorized"
+        })
+    }
+    const newAnswer=await Answer.findByIdAndUpdate(req.params.id,{
+        content:data.content
+    },{
+        new:true
+    })
+
+    return res.status(200).json({
+        success:true,
+        data:newAnswer
+    })
+    
+    } catch (error) {
+        console.log("Error in  Answer Update : ",error)
+        return res.status(500).json({
+            success:false,
+            error:"Internal Server Error"
+        })
+    }
+})
 
 
 export default questionRouter;

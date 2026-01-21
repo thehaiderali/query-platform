@@ -16,7 +16,7 @@ const taskSchema=new mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["pending","processing","completed","failed","completed"]
+        enum:["pending","processing","completed","failed"]
     },
     generatedAnswer:{
         type:String,
