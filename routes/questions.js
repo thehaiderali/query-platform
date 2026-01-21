@@ -216,7 +216,7 @@ questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
         new:true
     })
     return res.status(200).json({
-        success:false,
+        success:true,
         data:{
             upvotes:newQuestion.upvotes,
             upvoted:true
@@ -245,7 +245,7 @@ questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
     }
     let alreadyUpvoter=false
     for( const upvoter of question.upvoters){
-        if(upvoter===req.user._id){
+        if(upvoter.toString()===req.user._id.toString()){
             alreadyUpvoter=true
         }
     }
@@ -265,7 +265,7 @@ questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
         new:true
     })
     return res.status(200).json({
-        success:false,
+        success:true,
         data:{
             upvotes:newQuestion.upvotes,
             upvoted:false
@@ -330,7 +330,7 @@ questionRouter.get("/questions/:id/answers",async(req,res)=>{
     try {
         
       const {sortBy} =req.query;  
-      const question=await Question.findbyId(req.params.id);
+      const question=await Question.findById(req.params.id);
       if(!question){
         return res.status(400).json({
             success:false,
@@ -388,7 +388,7 @@ questionRouter.put("/answers/:id",authMiddleware,async(req,res)=>{
             error:"Answer not found"
         })
     }
-    if(answer.authorId!==req.user._id){
+    if(answer.authorId.toString()!==req.user._id.toString()){
         return res.status(403).json({
             success:false,
             error:"Not Authorized"
@@ -416,5 +416,3 @@ questionRouter.put("/answers/:id",authMiddleware,async(req,res)=>{
 
 
 export default questionRouter;
-
-
