@@ -1,7 +1,7 @@
 import {Router} from "express";
 import dotenv from "dotenv"
 import { authMiddleware } from "../middleware/middleware.js";
-import { answerSchema, questionSchema, questionUpdate } from "../validation/zod.js";
+import { answerSchema, questionSchema } from "../validation/zod.js";
 import { Question } from "../models/question.js";
 import { Answer } from "../models/answer.js";
 
@@ -109,87 +109,32 @@ questionRouter.get("/questions/:id",async(req,res)=>{
 
 
 
-
-questionRouter.put("/question/:id",authMiddleware,async(req,res)=>{
+questionRouter.delete("/questions/:id", authMiddleware, async (req, res) => {
     try {
-       
-     const {success,data}=questionUpdate.safeParse(req.body);
-     if(!success){
-        return res.status(400).json({
-            success:false,
-            error:"Invalid request schema"
-        })
-    }  
-    const question=await Question.findById(req.params.id);
-    if(!question){
-        return res.status(400).json({
-            success:false,
-            error:"Question not found"
-        })
-    }
-    if(question.authorId.toString()!==req.user._id.toString()){
-        return res.status(403).json({
-            success:false,
-            error:"Not Authorized"
-        })
-    }
-    const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
-        $set:data
-    },{
-        new : true
-    })
-
-    return res.status(200).json({
-        success:true,
-       data:newQuestion
-    })
-
-    } catch (error) {
-        console.log("Error in Questions Post : ",error)
-        return res.status(500).json({
-            success:false,
-            error:"Internal Server Error"
-        })
-    }
-})
-
-
-
-
-questionRouter.delete("/questions/:id",authMiddleware,async(req,res)=>{
-    try {
-
-    const question=await Question.findById(req.params.id);
-    if(!question){
-        return res.status(400).json({
-            success:false,
-            error:"Question not found"
-        })
-    }
-    if(question.authorId.toString()!==req.user._id.toString()){
-        return res.status(400).json({
-            success:false,
-            error:"Not Authorized"
-        })
-    }
-    const deleted=await Question.findByIdAndDelete(req.params.id)
-    return res.status(200).json({
-        success:true,
-        data:{
-            message:"Question deleted successfully"
+        const question = await Question.findById(req.params.id);
+        if (!question) {
+            return res.status(400).json({ 
+                success: false,
+                error: "Question not found"
+            });
         }
-    })
 
-        
+        if (question.authorId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                error: "Not Authorized"
+            });
+        }
+
+        await Question.findByIdAndDelete(req.params.id);
+        return res.status(200).json({
+            success: true,
+            data: { message: "Question deleted successfully" }
+        });
     } catch (error) {
-        console.log("Error in Questions Post : ",error)
-        return res.status(500).json({
-            success:false,
-            error:"Internal Server Error"
-        })
+        return res.status(500).json({ success: false, error: "Internal Server Error" });
     }
-})
-
+});
 
 
 questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
