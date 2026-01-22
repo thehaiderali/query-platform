@@ -9,7 +9,6 @@ dotenv.config()
 
 const questionRouter=Router();
 
-
 questionRouter.post("/questions",authMiddleware,async(req,res)=>{
     try {
 
@@ -371,48 +370,19 @@ questionRouter.get("/questions/:id/answers",async(req,res)=>{
 
 
 
-questionRouter.put("/answers/:id",authMiddleware,async(req,res)=>{
-    try {
 
-     const  {success,data}=answerSchema.safeParse(req.body);
-      if(!success){
-        return res.status(400).json({
-            success:false,
-            error:"Invalid request schema"
-        })
-      }  
-    const answer=await Answer.findById(req.params.id);
-    if(!answer){
-        return res.status(400).json({
-            success:false,
-            error:"Answer not found"
-        })
-    }
-    if(answer.authorId.toString()!==req.user._id.toString()){
-        return res.status(403).json({
-            success:false,
-            error:"Not Authorized"
-        })
-    }
-    const newAnswer=await Answer.findByIdAndUpdate(req.params.id,{
-        content:data.content
-    },{
-        new:true
-    })
 
-    return res.status(200).json({
-        success:true,
-        data:newAnswer
-    })
-    
-    } catch (error) {
-        console.log("Error in  Answer Update : ",error)
-        return res.status(500).json({
-            success:false,
-            error:"Internal Server Error"
-        })
-    }
-})
+
+
+
+
+
+
+
+
+
+
+
 
 
 export default questionRouter;
