@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { Answer } from "../models/answer";
-import { Question } from "../models/question";
+import { Answer } from "../models/answer.js";
+import { Question } from "../models/question.js";
+import { authMiddleware } from "../middleware/middleware.js";
+import { answerSchema } from "../validation/zod.js";
 
 const answerRouter=Router()
 
@@ -69,7 +71,7 @@ answerRouter.delete("/:id",authMiddleware,async(req,res)=>{
     }
    const deletedAnswer=await Answer.findByIdAndDelete(req.params.id);
      return res.status(200).json({
-        success:false,
+        success:true,
         data:{
           message:"Answer deleted successfully"  
         }
@@ -164,7 +166,7 @@ answerRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
     }
     let newUpvotes=answer.upvotes;
         newUpvotes-=1;
-    let newUpvoters=answer.upvoters.filter((upvoter)=>upvoter!==req.user._id)
+    let newUpvoters=answer.upvoters.filter((upvoter)=>upvoter.toString()!==req.user._id.toString())
     const newAnswer=await Answer.findByIdAndUpdate(req.params.id,{
         upvotes:newUpvotes,
         upvoters:newUpvoters,
@@ -194,7 +196,9 @@ answerRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
 
 
 answerRouter.post("/:id/accept",authMiddleware,async(req,res)=>{
-    const answer= await Answer.findById(req.params.id);
+    try {
+
+        const answer= await Answer.findById(req.params.id);
     if(!answer){
         return res.status(404).json({
             success:false,
@@ -228,6 +232,14 @@ answerRouter.post("/:id/accept",authMiddleware,async(req,res)=>{
            message:"Answer marked as accepted" 
         }
     })
+        
+    } catch (error) {
+        console.log("Error in Accepting Answer : ",error)
+        return res.status(500).json({
+            success:false,
+            error:"Internal Server Error"
+        })
+    }
 
 })
 

@@ -16,7 +16,8 @@ export async function authMiddleware(req,res,next){
     }
     const token=authHeaders?.split(" ")[1];
     // validate token
-    const decodedToken=jwt.decode(token,process.env.JWT_SECRET);
+    const decodedToken=jwt.verify(token,process.env.JWT_SECRET);
+    console.log("Decoded Token : ",decodedToken)
     const {success,data}=tokenSchema.safeParse(decodedToken); 
       if(!success){
         return res.status(400).json({

@@ -15,7 +15,9 @@ export const loginSchema=z.object({
 
 export const tokenSchema=z.object({
     userId:z.string(),
-    role:z.enum(["user","admin"]) 
+    role:z.enum(["user","admin"]),
+    iat:z.number(),
+    exp:z.number(),
 })
 
 

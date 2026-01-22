@@ -89,6 +89,7 @@ questionRouter.get("/questions/:id",async(req,res)=>{
      
 
      return res.status(200).json({
+        success:true,
         data:{
             question,
             answers
@@ -109,7 +110,7 @@ questionRouter.get("/questions/:id",async(req,res)=>{
 
 
 
-questionRouter.put("/question/:id",async(req,res)=>{
+questionRouter.put("/question/:id",authMiddleware,async(req,res)=>{
     try {
        
      const {success,data}=questionUpdate.safeParse(req.body);
@@ -119,15 +120,19 @@ questionRouter.put("/question/:id",async(req,res)=>{
             error:"Invalid request schema"
         })
     }  
-
     const question=await Question.findById(req.params.id);
     if(!question){
-        return res.status(400).json({
+        return res.status(404).json({
             success:false,
             error:"Question not found"
         })
     }
-
+    if(question.authorId.toString()!==req.user._id.toString()){
+        return res.status(403).json({
+            success:false,
+            error:"Not Authorized"
+        })
+    }
     const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
         $set:data
     },{
@@ -151,7 +156,7 @@ questionRouter.put("/question/:id",async(req,res)=>{
 
 
 
-questionRouter.delete("/questions/:id",async(req,res)=>{
+questionRouter.delete("/questions/:id",authMiddleware,async(req,res)=>{
     try {
 
     const question=await Question.findById(req.params.id);
@@ -161,8 +166,13 @@ questionRouter.delete("/questions/:id",async(req,res)=>{
             error:"Question not found"
         })
     }
-    await Question.findByIdAndDelete(req.params.id)
-
+    if(question.authorId.toString()!==req.user._id.toString()){
+        return res.status(403).json({
+            success:false,
+            error:"Not Authorized"
+        })
+    }
+    const deleted=await Question.findByIdAndDelete(req.params.id)
     return res.status(200).json({
         success:true,
         data:{
@@ -194,7 +204,7 @@ questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
     }
     let alreadyUpvoter=false
     for( const upvoter of question.upvoters){
-        if(upvoter===req.user._id){
+        if(upvoter.toString()===req.user._id.toString()){
             alreadyUpvoter=true
         }
     }
@@ -256,7 +266,7 @@ questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
     }
     let newUpvotes=question.upvotes;
         newUpvotes-=1;
-    let newUpvoters=question.upvoters.filter((upvoter)=>upvoter!==req.user._id)
+    let newUpvoters=question.upvoters.filter((upvoter)=>upvoter.toString()!==req.user._id.toString())
     const newQuestion=await Question.findByIdAndUpdate(req.params.id,{
         upvotes:newUpvotes,
         upvoters:newUpvoters,
@@ -303,7 +313,7 @@ questionRouter.post("/questions/:id/answers",authMiddleware,async(req,res)=>{
 
     const answer=await Answer.create({
         questionId:question._id,
-        authorId:question.authorId,
+        authorId:question.req.user._id,
         content:data.content,
         source:"user",
     })
@@ -365,23 +375,6 @@ questionRouter.get("/questions/:id/answers",async(req,res)=>{
         })
     }
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
