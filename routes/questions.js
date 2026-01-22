@@ -122,7 +122,7 @@ questionRouter.put("/question/:id",authMiddleware,async(req,res)=>{
     }  
     const question=await Question.findById(req.params.id);
     if(!question){
-        return res.status(404).json({
+        return res.status(400).json({
             success:false,
             error:"Question not found"
         })
@@ -167,7 +167,7 @@ questionRouter.delete("/questions/:id",authMiddleware,async(req,res)=>{
         })
     }
     if(question.authorId.toString()!==req.user._id.toString()){
-        return res.status(403).json({
+        return res.status(400).json({
             success:false,
             error:"Not Authorized"
         })
@@ -313,7 +313,7 @@ questionRouter.post("/questions/:id/answers",authMiddleware,async(req,res)=>{
 
     const answer=await Answer.create({
         questionId:question._id,
-        authorId:question.req.user._id,
+        authorId:req.user._id,
         content:data.content,
         source:"user",
     })
