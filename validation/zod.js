@@ -24,7 +24,7 @@ export const tokenSchema=z.object({
 export const questionSchema=z.object({
     title:z.string().min(10),
     description:z.string().min(20),
-    tags:z.array(z.string())
+    tags:z.array(z.string()).min(1)
 })
 
 export const questionUpdate=z.object({

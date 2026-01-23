@@ -27,8 +27,8 @@ app.use("/auth",authRouter)
 app.use("/questions",questionRouter)
 app.use("/answers",answerRouter)
 app.use("/users",userRouter)
-app.get("/ai-agents",getAgentsRouter);
-app.post("/ai-agents",createAgentRouter)
+app.use("/ai-agents",getAgentsRouter);
+app.use("/ai-agents",createAgentRouter)
 app.use("/api/inngest",inngestHandler)
 
 

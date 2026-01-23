@@ -2,7 +2,6 @@ import { Router } from "express";
 import { AIAgent } from "../models/agent.js";
 import { authMiddleware } from "../middleware/middleware.js";
 import { agentCreate } from "../validation/zod.js";
-import { inngest } from "../inngest/client.js";
 
 export const getAgentsRouter=Router();
 

@@ -7,6 +7,7 @@ import { Answer } from "../models/answer.js";
 import { Task } from "../models/task.js";
 import mongoose from "mongoose";
 import { assignAgent } from "../controllers/questionController.js";
+import { User } from "../models/user.js";
 dotenv.config()
 
 const questionRouter=Router();
@@ -27,7 +28,10 @@ questionRouter.post("/",authMiddleware,async(req,res)=>{
         tags:data.tags,
         authorId:req.user._id,
     })
-
+      // Update user's question count
+    await User.findByIdAndUpdate(req.user._id, {
+        $inc: { questionsCount: 1 }
+    });
     return res.status(201).json({
         success:true,
         data:newQuestion
@@ -141,7 +145,12 @@ questionRouter.delete("/:id", authMiddleware, async (req, res) => {
             });
         }
 
+        
+        await User.findByIdAndUpdate(req.user._id, {
+            $dec: { questionsCount: 1 }
+        });
         await Question.findByIdAndDelete(req.params.id);
+        
         return res.status(200).json({
             success: true,
             data: { message: "Question deleted successfully" }
