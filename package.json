@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:ui": "vitest --ui",
+    "test": "vitest tests/client-e2e.test.js",
+    "test:watch": "vitest watch tests/client-e2e.test.js",
+    "test:run": "vitest run tests/client-e2e.test.js",
     "dev": "nodemon index.js"
   },
   "keywords": [],
@@ -14,10 +14,8 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@vitest/ui": "^4.0.17",
     "axios": "^1.13.2",
     "nodemon": "^3.1.11",
-    "puppeteer": "^24.36.0",
     "vitest": "^4.0.17"
   },
   "dependencies": {

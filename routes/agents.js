@@ -11,7 +11,7 @@ getAgentsRouter.get("/",async(req,res)=>{
     try {
         
         const agents=await AIAgent.find();
-        if(agents.length()===0){
+        if(agents.length===0){
            return res.status(404).json({
                success:false,
                error:"No AI Agents Exist Now"
