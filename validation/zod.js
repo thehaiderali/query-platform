@@ -38,4 +38,12 @@ export const answerSchema=z.object({
     content:z.string().min(20)
 })
 
+export const agentSchema=z.object({
+    agentId:z.string()
+})
 
+export const agentCreate=z.object({
+    name:z.string(),
+    description:z.string(),
+    systemPrompt:z.string(),
+})

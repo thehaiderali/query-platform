@@ -12,7 +12,6 @@ const taskSchema=new mongoose.Schema({
     },
     inngestEventId:{
         type:String,
-        required:true
     },
     status:{
         type:String,
