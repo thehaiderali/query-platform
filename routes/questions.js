@@ -49,7 +49,7 @@ questionRouter.get("/questions",async(req,res)=>{
     try {
 
     const { page,limit}=req.query;
-    const questions=await Question.find().limit(limit*1).skip((page-1)*limit)  ;
+    const questions=await Question.find().limit(limit*1).skip((page-1)*limit) ;
     const count = await Question.countDocuments();
     return res.status(200).json({
         success:true,
