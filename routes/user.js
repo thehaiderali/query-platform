@@ -8,7 +8,7 @@ const userRouter=Router();
 
 
 
-userRouter.get("/users/:id",async(req,res)=>{
+userRouter.get("/:id",async(req,res)=>{
 
     try {
         
@@ -37,7 +37,7 @@ userRouter.get("/users/:id",async(req,res)=>{
 
 
 
-userRouter.get("/user/:id/questions",async(req,res)=>{
+userRouter.get("/:id/questions",async(req,res)=>{
     try {
 
         const user=await User.findById(req.params.id).select("-password")
@@ -78,7 +78,7 @@ userRouter.get("/user/:id/questions",async(req,res)=>{
 
 
 
-userRouter.get("/users/:id/answers",async(req,res)=>{
+userRouter.get("/:id/answers",async(req,res)=>{
 
     try {
 
@@ -119,3 +119,6 @@ userRouter.get("/users/:id/answers",async(req,res)=>{
 
 
 })
+
+
+export default userRouter

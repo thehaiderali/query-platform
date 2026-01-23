@@ -4,7 +4,7 @@ import { authMiddleware } from "../middleware/middleware.js";
 import { agentCreate } from "../validation/zod.js";
 
 
-const getAgentsRouter=Router();
+export const getAgentsRouter=Router();
 
 getAgentsRouter.get("/",async(req,res)=>{
       
@@ -32,7 +32,8 @@ getAgentsRouter.get("/",async(req,res)=>{
        }
 })
 
-const createAgentRouter=Router();
+
+export const createAgentRouter=Router();
 
 createAgentRouter.post("/",authMiddleware,async(req,res)=>{
     try {
@@ -72,3 +73,4 @@ createAgentRouter.post("/",authMiddleware,async(req,res)=>{
     }
 
 })
+

@@ -11,7 +11,7 @@ dotenv.config()
 
 const questionRouter=Router();
 
-questionRouter.post("/questions",authMiddleware,async(req,res)=>{
+questionRouter.post("/",authMiddleware,async(req,res)=>{
     try {
 
     const {success,data}=questionSchema.safeParse(req.body);
@@ -45,7 +45,7 @@ questionRouter.post("/questions",authMiddleware,async(req,res)=>{
 
 
 
-questionRouter.get("/questions",async(req,res)=>{
+questionRouter.get("/",async(req,res)=>{
     try {
 
     const { page,limit}=req.query;
@@ -75,7 +75,7 @@ questionRouter.get("/questions",async(req,res)=>{
 
 
 
-questionRouter.get("/questions/:id",async(req,res)=>{
+questionRouter.get("/:id",async(req,res)=>{
     try {
       
      const question=await Question.findById(req.params.id);
@@ -111,7 +111,7 @@ questionRouter.get("/questions/:id",async(req,res)=>{
 
 
 
-questionRouter.delete("/questions/:id", authMiddleware, async (req, res) => {
+questionRouter.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const question = await Question.findById(req.params.id);
         if (!question) {
@@ -139,7 +139,7 @@ questionRouter.delete("/questions/:id", authMiddleware, async (req, res) => {
 });
 
 
-questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
+questionRouter.post("/:id/upvote",authMiddleware,async(req,res)=>{
     try {
 
     const question=await Question.findById(req.params.id);
@@ -189,7 +189,7 @@ questionRouter.post("/questions/:id/upvote",authMiddleware,async(req,res)=>{
 })
 
 
-questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
+questionRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
     try {
 
     const question=await Question.findById(req.params.id);
@@ -240,7 +240,7 @@ questionRouter.delete("/questions/:id/upvote",authMiddleware,async(req,res)=>{
 
 
 
-questionRouter.post("/questions/:id/answers",authMiddleware,async(req,res)=>{
+questionRouter.post("/:id/answers",authMiddleware,async(req,res)=>{
     try {
 
       const  {success,data}=answerSchema.safeParse(req.body);
@@ -282,7 +282,7 @@ questionRouter.post("/questions/:id/answers",authMiddleware,async(req,res)=>{
 
 
 
-questionRouter.get("/questions/:id/answers",async(req,res)=>{
+questionRouter.get("/:id/answers",async(req,res)=>{
     try {
         
       const {sortBy} =req.query;  
@@ -325,7 +325,7 @@ questionRouter.get("/questions/:id/answers",async(req,res)=>{
 
 
 
-questionRouter.post("/questions/:id/assign-agent",authMiddleware,async(req,res)=>{
+questionRouter.post("/:id/assign-agent",authMiddleware,async(req,res)=>{
     try {
       
      const question=await Question.findById(req.params.id);
@@ -387,7 +387,7 @@ questionRouter.post("/questions/:id/assign-agent",authMiddleware,async(req,res)=
 })
 
 
-questionRouter.post("/questions/:id/ai-tasks",async(req,res)=>{
+questionRouter.post("/:id/ai-tasks",async(req,res)=>{
     try {
 
         const question=await Question.findById(req.params.id);

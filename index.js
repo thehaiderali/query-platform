@@ -5,14 +5,19 @@ import answerRouter from "./routes/answers.js"
 import dotenv from 'dotenv'
 import mongoose from "mongoose"
 import cors from "cors"
+import userRouter from "./routes/user.js"
+import { createAgentRouter, getAgentsRouter } from "./routes/agents.js"
+
 dotenv.config()
 const app=express()
 app.use(cors())
 app.use(express.json())
 app.use("/auth",authRouter)
-app.use("/",questionRouter)
+app.use("/questions",questionRouter)
 app.use("/answers",answerRouter)
-
+app.use("/users",userRouter)
+app.get("/ai-agents",getAgentsRouter);
+app.post("/ai-agents",createAgentRouter)
 
 
 const port=process.env.PORT || 3000
