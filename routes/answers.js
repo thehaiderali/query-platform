@@ -108,7 +108,7 @@ answerRouter.post("/:id/upvote",authMiddleware,async(req,res)=>{
     if(alreadyUpvoter){
         return res.status(409).json({
             success:false,
-            error:"Already upvoted this question"
+            error:"Already upvoted this answer"
         })
     }
     let newUpvotes=answer.upvotes;
