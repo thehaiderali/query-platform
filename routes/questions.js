@@ -7,6 +7,8 @@ import { Answer } from "../models/answer.js";
 import { agentSchema } from "../validation/zod.js";
 import { AIAgent } from "../models/agent.js";
 import { Task } from "../models/task.js";
+import { inngest } from "../inngest/client.js";
+import { assignAgent } from "../controllers/questionController.js";
 dotenv.config()
 
 const questionRouter=Router();
@@ -325,66 +327,7 @@ questionRouter.get("/:id/answers",async(req,res)=>{
 
 
 
-questionRouter.post("/:id/assign-agent",authMiddleware,async(req,res)=>{
-    try {
-      
-     const question=await Question.findById(req.params.id);
-     if(!question){
-        return res.status(404).json({
-            success:false,
-            error:"Question not found"
-        })
-     }  
-    const {success,data}=agentSchema.safeParse(req.body);
-    if(!success){
-        return res.status(400).json({
-            success:false,
-            error:"Invalid Request Scehma"
-        })
-    }
-    if(question.authorId.toString()!==req.user._id.toString()){
-        return res.status(403).json({
-            success:false,
-            error:"Not Authorized"
-        })
-    }
-
-    const agent=await AIAgent.findById(data.agentId);
-    if(agent){
-        return res.status(404).json({
-            success:false,
-            error:"Agent not found"
-        })
-    }
-
-    // Assigning Task
-
-    const newTask=await Task.create({
-        questionId:question._id,
-        agentId:agent._id,
-        status:"pending",
-
-    })
-
-    return res.status(200).json({
-        success:true,
-        data:{
-            taskId:newTask._id,
-            questionId:question._id,
-            agentId:agent._id,
-            status:newTask.status,
-            message:"Question Assigned to the Agent for Processing"
-        }
-    })
-
-    } catch (error) {
-        console.log("Error in Assigning Agent : ",error)
-        return res.status(500).json({
-            success:false,
-            error:"Internal Server Error"
-        })
-    }
-})
+questionRouter.post("/:id/assign-agent",authMiddleware,assignAgent)
 
 
 questionRouter.post("/:id/ai-tasks",async(req,res)=>{
