@@ -4,10 +4,8 @@ import { authMiddleware } from "../middleware/middleware.js";
 import { answerSchema, questionSchema } from "../validation/zod.js";
 import { Question } from "../models/question.js";
 import { Answer } from "../models/answer.js";
-import { agentSchema } from "../validation/zod.js";
-import { AIAgent } from "../models/agent.js";
 import { Task } from "../models/task.js";
-import { inngest } from "../inngest/client.js";
+import mongoose from "mongoose";
 import { assignAgent } from "../controllers/questionController.js";
 dotenv.config()
 
@@ -80,6 +78,11 @@ questionRouter.get("/",async(req,res)=>{
 questionRouter.get("/:id",async(req,res)=>{
     try {
       
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
      const question=await Question.findById(req.params.id);
      if(!question){
         return res.status(400).json({
@@ -115,6 +118,14 @@ questionRouter.get("/:id",async(req,res)=>{
 
 questionRouter.delete("/:id", authMiddleware, async (req, res) => {
     try {
+
+        
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
+
         const question = await Question.findById(req.params.id);
         if (!question) {
             return res.status(400).json({ 
@@ -143,7 +154,12 @@ questionRouter.delete("/:id", authMiddleware, async (req, res) => {
 
 questionRouter.post("/:id/upvote",authMiddleware,async(req,res)=>{
     try {
-
+    
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
     const question=await Question.findById(req.params.id);
     if(!question){
         return res.status(400).json({
@@ -193,6 +209,13 @@ questionRouter.post("/:id/upvote",authMiddleware,async(req,res)=>{
 
 questionRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
     try {
+     
+    
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }    
 
     const question=await Question.findById(req.params.id);
     if(!question){
@@ -244,7 +267,12 @@ questionRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
 
 questionRouter.post("/:id/answers",authMiddleware,async(req,res)=>{
     try {
-
+        
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
       const  {success,data}=answerSchema.safeParse(req.body);
       if(!success){
         return res.status(400).json({
@@ -286,7 +314,12 @@ questionRouter.post("/:id/answers",authMiddleware,async(req,res)=>{
 
 questionRouter.get("/:id/answers",async(req,res)=>{
     try {
-        
+       
+if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  } 
       const {sortBy} =req.query;  
       const question=await Question.findById(req.params.id);
       if(!question){
@@ -332,7 +365,12 @@ questionRouter.post("/:id/assign-agent",authMiddleware,assignAgent)
 
 questionRouter.post("/:id/ai-tasks",async(req,res)=>{
     try {
-
+        
+if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
         const question=await Question.findById(req.params.id);
         if(!question){
            return res.status(404).json({

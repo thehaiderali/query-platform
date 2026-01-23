@@ -2,8 +2,15 @@ import { Question } from "../models/question.js";
 import { AIAgent} from "../models/agent.js";
 import {Task} from "../models/task.js";
 import { inngest } from "../inngest/client.js";
+import mongoose from "mongoose";
 
 export const assignAgent = async (req, res) => {
+  
+if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+  return res.status(400).json({
+    message: 'Invalid or missing user id'
+  });
+}
   const { agentId } = req.body;
   const questionId = req.params.id;
 

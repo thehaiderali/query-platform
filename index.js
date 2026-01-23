@@ -13,6 +13,16 @@ dotenv.config()
 const app=express()
 app.use(cors())
 app.use(express.json())
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      return res.status(400).json({
+        message: 'Invalid JSON payload'
+      });
+    }
+    next();
+  });
+  
+app.get("/",(req,res)=>res.send("Query Platyform API"))
 app.use("/auth",authRouter)
 app.use("/questions",questionRouter)
 app.use("/answers",answerRouter)

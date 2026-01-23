@@ -3,14 +3,19 @@ import { Answer } from "../models/answer.js";
 import { Question } from "../models/question.js";
 import { authMiddleware } from "../middleware/middleware.js";
 import { answerSchema } from "../validation/zod.js";
-
+import mongoose from "mongoose";
 const answerRouter=Router()
 
 
 
 answerRouter.put("/:id",authMiddleware,async(req,res)=>{
     try {
-
+    
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
      const  {success,data}=answerSchema.safeParse(req.body);
       if(!success){
         return res.status(400).json({
@@ -55,7 +60,12 @@ answerRouter.put("/:id",authMiddleware,async(req,res)=>{
 
 answerRouter.delete("/:id",authMiddleware,async(req,res)=>{
     try {
-
+        
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
         const answer=await Answer.findById(req.params.id);
     if(!answer){
         return res.status(404).json({
@@ -91,7 +101,12 @@ answerRouter.delete("/:id",authMiddleware,async(req,res)=>{
 
 answerRouter.post("/:id/upvote",authMiddleware,async(req,res)=>{
     try {
-
+    
+if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: 'Invalid or missing user id'
+    });
+  }
     const answer=await Answer.findById(req.params.id);
     if(!answer){
         return res.status(400).json({
@@ -145,6 +160,11 @@ answerRouter.post("/:id/upvote",authMiddleware,async(req,res)=>{
 answerRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
     try {
 
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+              message: 'Invalid or missing user id'
+            });
+          }
     const answer=await Answer.findById(req.params.id);
     if(!answer){
         return res.status(400).json({
@@ -198,6 +218,11 @@ answerRouter.delete("/:id/upvote",authMiddleware,async(req,res)=>{
 answerRouter.post("/:id/accept",authMiddleware,async(req,res)=>{
     try {
 
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+              message: 'Invalid or missing user id'
+            });
+          }
         const answer= await Answer.findById(req.params.id);
     if(!answer){
         return res.status(404).json({

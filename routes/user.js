@@ -2,14 +2,18 @@ import {Router} from "express"
 import { User } from "../models/user.js";
 import { Question } from "../models/question.js";
 import { Answer } from "../models/answer.js";
-
+import mongoose from "mongoose";
 const userRouter=Router();
 
 
 userRouter.get("/:id",async(req,res)=>{
 
     try {
-        
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+              message: 'Invalid or missing user id'
+            });
+          }    
     const user=await User.findById(req.params.id).select("-password")
     if(!user){
         return res.status(404).json({
@@ -37,7 +41,11 @@ userRouter.get("/:id",async(req,res)=>{
 
 userRouter.get("/:id/questions",async(req,res)=>{
     try {
-
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+              message: 'Invalid or missing user id'
+            });
+          }
         const user=await User.findById(req.params.id).select("-password")
         if(!user){
             return res.status(404).json({
@@ -79,7 +87,11 @@ userRouter.get("/:id/questions",async(req,res)=>{
 userRouter.get("/:id/answers",async(req,res)=>{
 
     try {
-
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+              message: 'Invalid or missing user id'
+            });
+          }
         const user=await User.findById(req.params.id).select("-password")
         if(!user){
             return res.status(404).json({
