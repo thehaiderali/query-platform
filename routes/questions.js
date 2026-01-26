@@ -119,45 +119,55 @@ questionRouter.get("/:id",async(req,res)=>{
 })
 
 
-
 questionRouter.delete("/:id", authMiddleware, async (req, res) => {
-    try {
-
-        
+  try {
     if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({
-      message: 'Invalid or missing user id'
+      return res.status(400).json({
+        success: false,
+        error: "Invalid question ID"
+      });
+    }
+
+    const question = await Question.findById(req.params.id);
+    if (!question) {
+      return res.status(404).json({ 
+        success: false,
+        error: "Question not found"
+      });
+    }
+
+    if (question.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to delete this question"
+      });
+    }
+
+    // Update user's question count (decrement)
+    await User.findByIdAndUpdate(req.user._id, {
+      $inc: { questionsCount: -1 }
+    });
+
+    // Delete associated answers
+    await Answer.deleteMany({ questionId: question._id });
+
+    // Delete associated tasks
+    await Task.deleteMany({ questionId: question._id });
+
+    // Delete the question
+    await Question.findByIdAndDelete(req.params.id);
+    
+    return res.status(200).json({
+      success: true,
+      data: { message: "Question deleted successfully" }
+    });
+  } catch (error) {
+    console.error('Delete question error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      error: "Internal server error" 
     });
   }
-
-        const question = await Question.findById(req.params.id);
-        if (!question) {
-            return res.status(400).json({ 
-                success: false,
-                error: "Question not found"
-            });
-        }
-
-        if (question.authorId.toString() !== req.user._id.toString()) {
-            return res.status(403).json({
-                success: false,
-                error: "Not Authorized"
-            });
-        }
-
-        
-        await User.findByIdAndUpdate(req.user._id, {
-            $dec: { questionsCount: 1 }
-        });
-        await Question.findByIdAndDelete(req.params.id);
-        
-        return res.status(200).json({
-            success: true,
-            data: { message: "Question deleted successfully" }
-        });
-    } catch (error) {
-        return res.status(500).json({ success: false, error: "Internal Server Error" });
-    }
 });
 
 
